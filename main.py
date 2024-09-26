@@ -39,16 +39,13 @@ while amostra <= numAmostra:
             margem_y = altura * 0.1
 
             if x > margem_x and (x + l) < (largura - margem_x) and y > margem_y and (y + a) < (altura - margem_y):
-                print("Rosto enquadrado.")
                 imagem = imagemCinza[y:y + a, x:x + l]
                 imagem = cv2.resize(imagem, (largura, altura))
-                cv2.imwrite(f"fotos2/auto_fotos_{amostra}.jpg", imagem)
-                print(f"[foto {amostra}] capturada.")
-                amostra += 1
                
         sucesso = cv2.imwrite(f"fotos2/auto_fotos_{amostra}.jpg", imagem)
         if sucesso:
             print(f"[foto {amostra}] capturada com sucesso.")
+            amostra += 1
         else:
             print(f"Falha ao salvar a foto {amostra}.")
 
