@@ -1,5 +1,6 @@
 import cv2
 import time
+import os
 
 classific = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
@@ -7,6 +8,9 @@ camera = cv2.VideoCapture(0)
 if not camera.isOpened():
     print("Erro ao acessar a câmera.")
     exit()
+
+if not os.path.exists('fotos2'):
+    os.makedirs('fotos2')
 
 amostra = 1
 numAmostra = 25
