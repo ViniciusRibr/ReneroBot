@@ -1,0 +1,37 @@
+Perguntas
+NOME
+IDADE
+ESCOLA
+CURSO
+Hábitos de consumo, interesses, hobbies, canais de comunicação preferidos.
+Valores, crenças, motivações, medos, aspirações.
+O QUE PROCURA NUM CHATBOT?
+
+Cauã;
+16 Anos;
+E.E Barão de Jundiaí;
+Cursando tecnico de desenvolvimento sistema;
+Dormir, Mexer no celular e Comer;
+Ser uma pessoa carismatica,Engraçada,Espirutualidade, Deus(Cristo), Falhar na vida e Mãe e vô;
+Usaria para responder duvídas.
+
+
+
+Arthur;
+16 Anos;
+E.E Barão de Jundiaí;
+Não cursa;
+Joga Basquete e Ver futbol;
+Quer ser bem sucedido na vida e Cristão ;
+Perguntas cotidianas, duvídas, ajuda e aprenderia com a ia.
+
+
+
+
+Gabriel;
+16 Anos;
+Aluno(E.E Barão de jundiaí);
+Cursando um curso tecnico de desenvolvimento de sistema;
+Jogar e Estudar;
+Cristão,Ter liberdade financceira;
+Responder duvídas.
