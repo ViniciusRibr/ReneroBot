@@ -1,12 +1,19 @@
 import random
-class interacaoChatBot():
+class interacaoChatBot:
     def __init__(self):
-        global iteracao
-        iteracao = ["Olá! Como posso te ajudar hoje? ",
-                    "No que posso ser útil? ",
-                    "Qual o motivo da sua visita? ",
-                    "O que você espera encontrar aqui? ",
-                    "Qual a sua principal dúvida no momento? "
-                    ]
-    def IteracaoRam(self):
-        return random.choice(iteracao)
+        self.saudacoes = [
+            "Olá! Como posso te ajudar hoje?",
+            "Oi! Que bom ver você por aqui!",
+            "Bem-vindo! O que você gostaria de conversar?"
+        ]
+        self.despedidas = [
+            "Foi um prazer falar com você, até logo!",
+            "Espero que tenha um ótimo dia! Volte sempre!",
+            "Se precisar de mais alguma coisa, estou aqui. Até a próxima!"
+        ]
+
+    def iteracao_ram(self):
+        return random.choice(self.saudacoes)
+
+    def say_goodbye(self):
+        return random.choice(self.despedidas)
