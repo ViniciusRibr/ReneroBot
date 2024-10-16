@@ -1,0 +1,22 @@
+def coletar_feedback():
+   print("Por favor, manda uma avaliação de 1 a 5 estrelas.")
+   feedback = input("Digite o número de estrelas: ")
+   while feedback not in ['1', '2', '3', '4', '5']:
+       print("Entrada inválida. Por favor, digite um número de 1 a 5")
+       feedback = input("Digite o número de estrelas: ")
+       print(f"Obrigado por nos dar {feedback} estrela(s)!")
+       return feedback
+   
+def chatbot():
+    print("Chatbot: Iae irmão!, como posso te ajudar?")
+    resposta = input("Você: ")
+    print("Chatbot: Agradeço por sua mensagem mano!")
+    
+    
+    feedback = coletar_feedback()
+    
+    
+    print("Seu feedback foi registrado, valeu!")
+    
+if __name__ == "__main__":
+    chatbot()
