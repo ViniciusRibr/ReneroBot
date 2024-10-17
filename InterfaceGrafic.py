@@ -1,6 +1,8 @@
 import customtkinter as ctk
 from Chatbot import GerarConteudo
 from Perguntas import interacaoChatBot
+from PIL import Image
+
 chat_interaction = interacaoChatBot()
 
 def iniciar_chat():
@@ -48,6 +50,13 @@ def send_message(chat_box, user_input):
 app = ctk.CTk()
 app.geometry("400x600")
 app.title("ReneroBot")
+
+original_image = Image.open("imagens/1_.png")
+resized_image = original_image.resize((500, 600), Image.Resampling.LANCZOS)
+
+bg_image = ctk.CTkImage(resized_image)
+bg_label = ctk.CTkLabel(app, Image=bg_image)
+bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
 #Botão de iniciar Chat
 button = ctk.CTkButton(app, text="Iniciar Chat", command=iniciar_chat)
