@@ -22,7 +22,8 @@ def iniciar_chat():
     send_button = ctk.CTkButton(app, text="Enviar", command=lambda: send_message(chat_box , user_input))
     send_button.pack(padx=10 , pady=10, side="left")
 
-def send_message(cha_box, user_input):
+
+def send_message(chat_box, user_input):
     # Pega o texto digitado pelo usuário
     mensagem = user_input.get()
 
@@ -40,16 +41,16 @@ def send_message(cha_box, user_input):
         chat_box.insert("end", f"Chatbot: {resposta}\n")        
         chat_box.see("end")
 
-def button_callback():
-    print("Button pressed")
+    # Limpa a interface de chat
+    for widget in app.winfo_children():
+        widget.destroy()
 
 app = ctk.CTk()
 app.geometry("400x600")
-app.title("Meu WhatsApp")
 app.title("ReneroBot")
 
-button = ctk.CTkButton(app, text="my button", command=button_callback)
-button.grid(row=0, column=0, padx=20, pady=20)
+#Botão de iniciar Chat
+button = ctk.CTkButton(app, text="Iniciar Chat", command=iniciar_chat)
 button.pack(expand=True)
 
 app.mainloop()
