@@ -3,6 +3,7 @@ from Chatbot import GerarConteudo
 from Perguntas import interacaoChatBot
 from PIL import Image
 
+gerador_conteudo = GerarConteudo()
 chat_interaction = interacaoChatBot()
 
 def iniciar_chat():
@@ -36,26 +37,24 @@ def send_message(chat_box, user_input):
         user_input.delete(0 , "end")
 
         #Integração com a API
-        conversa = GerarConteudo(mensagem)
-        resposta = conversa.gerarTexto()
+        resposta = gerador_conteudo.gerarTexto(mensagem)
 
         #Exibe a mensagem do ChatBot
         chat_box.insert("end", f"Chatbot: {resposta}\n")        
         chat_box.see("end")
 
-    # Limpa a interface de chat
-    for widget in app.winfo_children():
-        widget.destroy()
 
 app = ctk.CTk()
-app.geometry("400x600")
+app.geometry("800x600")
 app.title("ReneroBot")
 
 original_image = Image.open("imagens/1_.png")
-resized_image = original_image.resize((500, 600), Image.Resampling.LANCZOS)
+resized_image = original_image.resize((800, 600), Image.Resampling.LANCZOS)
 
-bg_image = ctk.CTkImage(resized_image)
-bg_label = ctk.CTkLabel(app, Image=bg_image)
+bg_image = ctk.CTkImage(light_image=resized_image, size=(800, 600))
+
+#Criar um label com a imagem de fundo
+bg_label = ctk.CTkLabel(app, image=bg_image)
 bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
 #Botão de iniciar Chat

@@ -1,21 +1,16 @@
 from Chatbot import GerarConteudo
 from Perguntas import interacaoChatBot
 
+gerador_conteudo = GerarConteudo()
 teste = interacaoChatBot()
 print(teste.iteracao_ram())
 
 while True:
-    # Entrada do usuário
     prompt = input("Digite sua pergunta, (Ou digite 'sair' para encerrar.): ")
-    
-    if prompt.lower() == 'sair':
-        print(teste.say_goodbye())  # Exibe a despedida
-        break  # Encerra o loop
-
-    # Gerar resposta do chatbot
+  
+    #Gera resposta do chatbot
     try:
-        conversa = GerarConteudo(prompt)
-        textogerado = conversa.gerarTexto()
+        textogerado = gerador_conteudo.gerarTexto(prompt)
         print(textogerado)
 
         # Verifica se há uma resposta válida antes de imprimir
