@@ -21,30 +21,8 @@ class interacaoChatBot:
             "Bem-vindo ao chat! Qual é a sua pergunta?"
             "Olá! Pronto para te ajudar com o que precisar!" 
         ]
-        self.despedidas = [
-            "Foi um prazer falar com você, até logo!",
-            "Espero que tenha um ótimo dia! Volte sempre!",
-            "Se precisar de mais alguma coisa, estou aqui. Até a próxima!"
-            "Foi um prazer falar com você, até logo!"
-            "Espero que tenha um ótimo dia! Volte sempre!"
-            "Se precisar de mais alguma coisa, estarei por aqui. Até a próxima!"
-            "Obrigado por conversar! Até breve!"
-            "Que bom ter ajudado, até a próxima!"
-            "Foi bom falar com você! Tenha um ótimo dia!"
-            "Volte sempre que precisar! Até logo!"
-            "Obrigado pela conversa! Espero que tenha uma ótima semana!"
-            "Fico feliz em ter ajudado! Até a próxima!"
-            "Estarei por aqui se precisar, volte quando quiser! Até mais!"
-            "Foi um prazer ajudar! Até a próxima!"
-            "Tenha um ótimo dia e até mais!"
-            "Volte sempre que precisar, ficarei à disposição!"
-            "Que bom que pude te ajudar! Até a próxima conversa!"
-            "Espero que você tenha uma ótima semana! Até logo!"
-            "Sempre bom falar com você! Até a próxima!"
-        ]
-
+       
     def iteracao_ram(self):
         return random.choice(self.saudacoes)
 
-    def say_goodbye(self):
-        return random.choice(self.despedidas)
+  
