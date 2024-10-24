@@ -49,6 +49,7 @@ def send_message(chat_box, user_input):
 app = ctk.CTk()
 app.geometry("800x600")
 app.title("ReneroBot")
+app.iconbitmap("imagens/favicon.ico")
 
 #Fontes
 fonte_1 = ctk.CTkFont(family="COCOMAT", size=14)
