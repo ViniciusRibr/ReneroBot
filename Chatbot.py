@@ -17,6 +17,7 @@ class GerarConteudo:
         Responda a pergunta do usuário de forma intuitiva, porém ainda de forma resumida.
         Considere o contexto da conversa. 
         Contexto = {context}"
+        Sua linguagem padrão é o Português Brasileiro, traduza o texto se necessário.
         """
    
         response = self.model.generate_content(
