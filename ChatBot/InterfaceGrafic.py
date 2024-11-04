@@ -22,20 +22,18 @@ def iniciar_chat():
     user_input = ctk.CTkEntry(app, placeholder_text="Digite sua mensagem aqui..", width=350, font=fonte_2)
     user_input.pack(padx=20, pady=10, side="left")
 
-    send_image = Image.open("imagens/Sendimage2.png")  
-    send_image_tk = ctk.CTkImage(light_image=send_image)
+    send_image = Image.open("imagens/Sendimage2.png")
+    send_image_tk = ctk.CTkImage(light_image=send_image,)
 
     #Botão de envio
-    send_button = ctk.CTkButton(app, image=send_image_tk, command=lambda: send_message(chat_box , user_input),
-                                text= "", fg_color=app.cget('bg'), hover_color=app.cget('bg'), border_width=0)
-                                #Ajustar tamanho
-    send_button.pack(padx=10, pady=10)
-    send_button.pack(padx=10 , pady=10, side="left")
+    send_button = ctk.CTkButton(app, text="", image=send_image_tk, command=lambda: send_message(chat_box , user_input),
+                                fg_color=app.cget('bg'), hover_color=app.cget('bg'), width=90, height=90)
+    send_button.pack(side="left", padx=10, pady=10)
+    #Envia a mensagem após apertar "Enter"
     user_input.bind("<Return>", lambda event: send_message(chat_box, user_input))
 
 
 def send_message(chat_box, user_input):
-    # Pega o texto digitado pelo usuário
     mensagem = user_input.get()
 
     #Exibe a mensagem na caixa de texto
