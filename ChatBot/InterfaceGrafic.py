@@ -15,6 +15,7 @@ def iniciar_chat():
     hello = chat_interaction.iteracao_ram()
     chat_box = ctk.CTkTextbox(app, width=400, height=500, font=fonte_2)
     chat_box.pack(padx=20, pady=20)
+    
     chat_box.insert("end", f"ChatBot: {hello}\n")
     chat_box.see("end")
 
@@ -22,13 +23,13 @@ def iniciar_chat():
     user_input = ctk.CTkEntry(app, placeholder_text="Digite sua mensagem aqui..", width=350, font=fonte_2)
     user_input.pack(padx=20, pady=10, side="left")
 
-    send_image = Image.open("imagens/Sendimage2.png")
-    send_image_tk = ctk.CTkImage(light_image=send_image,)
+    send_image = Image.open("imagens/Sendimage2.png").resize((40, 40), Image.Resampling.LANCZOS)
+    send_image_tk = ctk.CTkImage(light_image=send_image, size=(40, 40))
 
     #Botão de envio
     send_button = ctk.CTkButton(app, text="", image=send_image_tk, command=lambda: send_message(chat_box , user_input),
-                                fg_color=app.cget('bg'), hover_color=app.cget('bg'), width=90, height=90)
-    send_button.pack(side="left", padx=10, pady=10)
+                                fg_color=app.cget('bg'), hover_color=app.cget('bg'), width=40, height=40)
+    send_button.pack(side="left", padx=30, pady=10)
     #Envia a mensagem após apertar "Enter"
     user_input.bind("<Return>", lambda event: send_message(chat_box, user_input))
 
@@ -46,7 +47,7 @@ def send_message(chat_box, user_input):
         resposta = gerador_conteudo.gerarTexto(mensagem)
 
         #Exibe a mensagem do ChatBot
-        chat_box.insert("end", f"Chatbot: {resposta}\n")        
+        chat_box.insert("end", f"Chatbot: {resposta}\n" )       
         chat_box.see("end")
 
 
