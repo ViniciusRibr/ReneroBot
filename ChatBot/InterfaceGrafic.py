@@ -14,6 +14,7 @@ def iniciar_chat():
     app.geometry("500x700")
     hello = chat_interaction.iteracao_ram()
     chat_box = ctk.CTkTextbox(app, width=400, height=500, font=fonte_2)
+    chat_box.tag_config("Usuário", background="#444444", relief="solid", borderwidth=0, lmargin1=5, lmargin2=5, rmargin=5)
     chat_box.pack(padx=20, pady=20)
     
     chat_box.insert("end", f"ChatBot: {hello}\n")
@@ -23,6 +24,7 @@ def iniciar_chat():
     user_input = ctk.CTkEntry(app, placeholder_text="Digite sua mensagem aqui..", width=350, font=fonte_2)
     user_input.pack(padx=20, pady=10, side="left")
 
+    #Logo do Botão de envio
     send_image = Image.open("imagens/Sendimage2.png").resize((40, 40), Image.Resampling.LANCZOS)
     send_image_tk = ctk.CTkImage(light_image=send_image, size=(40, 40))
 
@@ -33,13 +35,17 @@ def iniciar_chat():
     #Envia a mensagem após apertar "Enter"
     user_input.bind("<Return>", lambda event: send_message(chat_box, user_input))
 
+    #Profile picture
+    Pf = Image.open("imagens/4.png") 
+    Pf_resize = Pf.resize((30, 30), Image.Resampling.LANCZOS)
+    Pf_tk = ctk.CTkImage(light_image=Pf_resize)
 
 def send_message(chat_box, user_input):
     mensagem = user_input.get()
 
     #Exibe a mensagem na caixa de texto
     if mensagem:
-        chat_box.insert("end", f"Você : {mensagem}\n")
+        chat_box.insert("end", f"Você : {mensagem}\n", "Usuário")
         chat_box.see("end")
         user_input.delete(0 , "end")
 
@@ -47,7 +53,9 @@ def send_message(chat_box, user_input):
         resposta = gerador_conteudo.gerarTexto(mensagem)
 
         #Exibe a mensagem do ChatBot
-        chat_box.insert("end", f"Chatbot: {resposta}\n" )       
+        label_img = ctk.CTkLabel(chat_box, image=Pf_tk)
+        label_img.pack(side="left", padx=5) 
+        chat_box.insert("end", f"Chatbot: {resposta}\n", )      
         chat_box.see("end")
 
 
