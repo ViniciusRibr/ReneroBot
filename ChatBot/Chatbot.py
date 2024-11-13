@@ -9,7 +9,7 @@ class GerarConteudo:
     def gerarTexto(self, entrada):
         self.conversa.append(f"Usuário: {entrada}")
 
-        context_max = 15
+        context_max = 20
         context = ' '.join(self.conversa[-context_max:])
 
         prompt = f"""Tu és um assistente virtual amigavel.
