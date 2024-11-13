@@ -9,7 +9,7 @@ class GerarConteudo:
     def gerarTexto(self, entrada):
         self.conversa.append(f"Usuário: {entrada}")
 
-        context_max = 15
+        context_max = 20
         context = ' '.join(self.conversa[-context_max:])
 
         prompt = f"""Você é um assistente virtual amigável e profissional. Responda de forma direta e sem saudações ou introduções nas respostas, exceto na primeira interação do usuário. Concentre-se em responder o conteúdo da mensagem, considerando o contexto de conversas anteriores.
