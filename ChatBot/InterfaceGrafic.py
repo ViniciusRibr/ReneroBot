@@ -42,6 +42,10 @@ def iniciar_chat():
     user_input.bind("<Return>", lambda event: send_message(chat_box, user_input))
 
 
+    # Envia a mensagem após apertar "Enter"
+    user_input.bind("<Return>", lambda event: send_message(chat_box, user_input))
+
+
 def send_message(chat_box, user_input):
     mensagem = user_input.get()
 
@@ -54,13 +58,15 @@ def send_message(chat_box, user_input):
         # Integração com a API
         resposta = gerador_conteudo.gerarTexto(mensagem)
 
-
         #Exibe a mensagem do ChatBot
+        label_img = ctk.CTkLabel(chat_box)
+        label_img.pack(side="left", padx=5) 
         chat_box.insert("end", f"Chatbot: {resposta}\n", )      
 
         # Exibe a mensagem do bot
         chat_box.insert("end", "🤖 ChatBot: ", "ChatBot")
         chat_box.insert("end", f"{resposta}\n", "ChatBot")
+
         chat_box.see("end")
 
 app = ctk.CTk()
