@@ -11,10 +11,16 @@ ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
 def iniciar_chat():
+    global chat_box  # Tornando chat_box uma variável global
     for widget in app.winfo_children():
         widget.destroy()
     app.geometry("500x700")
     hello = chat_interaction.iteracao_ram()
+
+    # Botão de lixeira para apagar conversa
+    clear_icon = ctk.CTkButton(app, text="🗑", font=fonte_emoji, command=clear_chat,
+                               fg_color="transparent", hover_color="#444444", width=40, height=40)
+    clear_icon.pack(pady=(10, 0))  # Posiciona o ícone acima da caixa de chat
 
     # Caixa de chat
     chat_box = ctk.CTkTextbox(app, width=400, height=500, font=fonte_2)
@@ -57,6 +63,10 @@ def send_message(chat_box, user_input):
 
         chat_box.see("end")
 
+def clear_chat():
+    """Função para limpar o conteúdo da caixa de chat."""
+    chat_box.delete("1.0", "end")  # Limpa todo o conteúdo da chat_box
+
 app = ctk.CTk()
 app.geometry("800x600")
 app.title("ReneroBot")
@@ -65,6 +75,7 @@ app.iconbitmap("imagens/favicon.ico")
 # Fontes
 fonte_1 = ctk.CTkFont(family="COCOMAT", size=14)
 fonte_2 = ctk.CTkFont(family="Inter 18pt Medium", size=12)
+fonte_emoji = ctk.CTkFont(family="Inter", size=24)  # Fonte maior para o emoji de lixeira
 
 # Imagem de fundo
 original_image = Image.open("imagens/1_.png").resize((800, 600), Image.Resampling.LANCZOS)
