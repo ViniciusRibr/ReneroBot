@@ -1,8 +1,9 @@
 import customtkinter as ctk
-from Chatbot import GerarConteudo
-from Perguntas import interacaoChatBot
+import ctypes
 from PIL import Image
 
+from Chatbot import GerarConteudo
+from Perguntas import interacaoChatBot
 gerador_conteudo = GerarConteudo()
 chat_interaction = interacaoChatBot()
 
@@ -17,10 +18,10 @@ def iniciar_chat():
     app.geometry("500x700")
     hello = chat_interaction.iteracao_ram()
 
-    # Botão de lixeira para apagar conversa
+    # Botão de lixeira
     clear_icon = ctk.CTkButton(app, text="🗑", font=fonte_emoji, command=clear_chat,
                                fg_color="transparent", hover_color="#444444", width=40, height=40)
-    clear_icon.pack(pady=(10, 0))  # Posiciona o ícone acima da caixa de chat
+    clear_icon.pack(pady=(10, 0)) 
 
     # Caixa de chat
     chat_box = ctk.CTkTextbox(app, width=400, height=500, font=fonte_2)
@@ -59,9 +60,8 @@ def send_message(chat_box, user_input):
         # Exibe a mensagem do bot
         display_dynamic_text(chat_box, f"🤖 ChatBot: {resposta}\n", "ChatBot")
 
-# Texto Suave
+# Mostra o texto caractere por caractere
 def display_dynamic_text(chat_box, text, tag, delay=3):
-    """Exibe o texto dinamicamente na chat_box, caractere por caractere."""
     index = 0
 
     def type_next_character():
@@ -74,13 +74,15 @@ def display_dynamic_text(chat_box, text, tag, delay=3):
 
     type_next_character()
 
+# Limpar mensagens
 def clear_chat():
-    """Função para limpar o conteúdo da caixa de chat."""
     chat_box.delete("1.0", "end")  # Limpa todo o conteúdo da chat_box
 
 app = ctk.CTk()
 app.geometry("800x600")
 app.title("ReneroBot")
+myappid = "meuNome.meuChatbot.interface.v1"  # Exemplo de ID único
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 app.iconbitmap("imagens/favicon.ico")
 
 # Fontes
