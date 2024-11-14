@@ -14,6 +14,7 @@ def iniciar_chat():
     for widget in app.winfo_children():
         widget.destroy()
     app.geometry("500x700")
+    
     hello = chat_interaction.iteracao_ram()
 
     # Caixa de chat
@@ -22,10 +23,10 @@ def iniciar_chat():
     chat_box.tag_config("ChatBot", background="#222222", foreground="white", lmargin1=5, rmargin=5)
     chat_box.pack(padx=20, pady=(20, 0))
 
-    # Saudações
+    # Adiciona a primeira mensagem do bot
     display_dynamic_text(chat_box, f"🤖 ChatBot: {hello}\n", "ChatBot")
 
-    # Campo de entrada do usuário
+    # Campo de entrada do usuário (com bordas arredondadas)
     user_input = ctk.CTkEntry(app, placeholder_text="Digite sua mensagem aqui..", width=350, font=fonte_2)
     user_input.pack(side="left", padx=(20, 10), pady=10)
 
@@ -35,6 +36,7 @@ def iniciar_chat():
     send_button = ctk.CTkButton(app, text="", image=send_image_tk, command=lambda: send_message(chat_box, user_input),
                                 fg_color=app.cget('bg'), hover_color=app.cget('bg'), width=40, height=40)
     send_button.pack(side="left", padx=(35), pady=10)
+
     # Envia a mensagem após apertar "Enter"
     user_input.bind("<Return>", lambda event: send_message(chat_box, user_input))
 
@@ -47,26 +49,26 @@ def send_message(chat_box, user_input):
         chat_box.see("end")
         user_input.delete(0, "end")
 
-        # Integração com a API
-        resposta = gerador_conteudo.gerarTexto(mensagem)    
+        # Integração com a API para obter a resposta do chatbot
+        resposta = gerador_conteudo.gerarTexto(mensagem)
 
-        # Exibe a mensagem do bot
+        # Exibe a mensagem do bot de forma dinâmica
         display_dynamic_text(chat_box, f"🤖 ChatBot: {resposta}\n", "ChatBot")
 
-# Texto Suave
-def display_dynamic_text(chat_box, text, tag, delay=3):
-    """Exibe o texto dinamicamente na chat_box, caractere por caractere."""
+def display_dynamic_text(chat_box, text, tag, delay=100):
+    """Exibe o texto dinamicamente na chat_box, palavra por palavra."""
+    words = text.split()
     index = 0
 
-    def type_next_character():
+    def type_next_word():
         nonlocal index
-        if index < len(text):
-            chat_box.insert("end", text[index], tag)
+        if index < len(words):
+            chat_box.insert("end", words[index] + " ", tag)
             chat_box.see("end")
             index += 1
-            app.after(delay, type_next_character)  # Aguarda o delay antes de exibir o próximo caractere
+            app.after(delay, type_next_word)  # Aguarda o delay antes de exibir a próxima palavra
 
-    type_next_character()
+    type_next_word()
 
 app = ctk.CTk()
 app.geometry("800x600")
