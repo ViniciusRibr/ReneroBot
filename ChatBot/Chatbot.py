@@ -1,19 +1,40 @@
+import json
 import google.generativeai as genai
 
 class GerarConteudo:
-    def __init__(self):
+    def __init__(self, memory_path="memorias.json"):
         self.conversa = []
-        genai.configure(api_key="AIzaSyC2Or3aeQYbH_OSzLxqs-Yd0nRmMYTjNsQ")
+        self.memory = {}
+        self.memory_path = memory_path
+        self.load_memory()
+
+        genai.configure(api_key="AIzaSyBg9-jNfIC6Ah5X5en2-ESiRwNy77Ide9Y")
         self.model = genai.GenerativeModel("gemini-1.5-flash")
+
+
+    def save_memory(self):
+        with open(self.memory_path, "w") as file:
+            json.dump(self.memory, file, indent=4)
+
+    def load_memory(self):
+        try:
+            with open(self.memory_path, "r") as file:
+                self.memory = json.load(file)
+        except FileNotFoundError:
+            self.memory = {}
+
 
     def gerarTexto(self, entrada):
         self.conversa.append(f"Usuário: {entrada}")
 
         context_max = 20
         context = ' '.join(self.conversa[-context_max:])
-
+        memory_context = "\n".join(
+            [f"{chave}: {valor}" for chave, valor in self.memory.items()]
+        )
         prompt = f"""Você é um assistente virtual amigável e profissional chamado ReneroBot. Responda de forma direta e sem saudações ou introduções nas respostas, exceto na primeira interação do usuário. Concentre-se em responder o conteúdo da mensagem, considerando o contexto de conversas anteriores.
         Considere o seguinte contexto: {context}
+        Se o usuário pedir para lembrar de algo, registe explicitamente no formato "Memoria: chave=valor", Memorias importantes do usuário : {memory_context}
         Idioma padrão: Português Brasileiro. Traduza o texto se necessário. Evite repetir saudações e introduções; não utilize muitos emojis ou gírias.
 
         Se a resposta for complexa, pergunte ao final se o usuário necessita de algo mais."""
@@ -23,11 +44,21 @@ class GerarConteudo:
             prompt,
             generation_config=genai.types.GenerationConfig(
                 candidate_count=1,
-                stop_sequences=[""],
+                stop_sequences=[".", "?", "!", "Até mais"],
                 max_output_tokens=2000,
                 temperature=1.0,
             )
         )
         self.conversa.append(f"Assistente: {response.text}")
         return response.text
-    
+
+    def process_memory(self, texto_resposta):
+        """Processa e salva memórias indicadas pelo bot."""
+        if "Memória:" in texto_resposta:
+            linhas = texto_resposta.splitlines()
+            for linha in linhas:
+                if linha.startswith("Memória:"):
+                    _, dados = linha.split("Memória:", 1)
+                    chave, valor = dados.split("=", 1)
+                    self.memory[chave.strip()] = valor.strip()
+            self.save_memory()

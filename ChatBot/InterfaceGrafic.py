@@ -12,7 +12,9 @@ ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
 def iniciar_chat():
-    global chat_box  # Tornando chat_box uma variável global
+    global chat_box
+    global user_input
+    global send_button
     for widget in app.winfo_children():
         widget.destroy()
     app.geometry("500x700")
