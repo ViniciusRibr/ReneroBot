@@ -1,22 +1,26 @@
 from flask import Flask, request, jsonify
-from chatbot import GerarConteudo
+from flask_cors import CORS
 
-# Inicializar Flask e ChatBot
 app = Flask(__name__)
-chatbot = GerarConteudo()
+CORS(app)
 
-@app.route('/api/chat', methods=['POST'])
-def chat():
-    data = request.json  # Obter os dados enviados no corpo da requisição
-    mensagem = data.get("mensagem")  # Capturar a mensagem do usuário
+@app.route("/")
+def home():
+    return "API está funcionando! Acesse as rotas específicas para interagir com o chatbot."
 
+@app.route("/gerar-conteudo", methods=["POST"])
+def gerar_conteudo():
+    data = request.get_json()
+    mensagem = data.get("mensagem")
     if not mensagem:
-        return jsonify({"erro": "Nenhuma mensagem fornecida."}), 400
+        return jsonify({"erro": "Mensagem não fornecida"}), 400
 
-    # Gerar resposta usando o ChatBot
-    resposta = chatbot.gerarTexto(mensagem)
+    # Lógica do chatbot
+    try:
+        resposta = "Resposta gerada pelo Chatbot: " + mensagem  # Substitua pela lógica real
+        return jsonify({"resposta": resposta})
+    except Exception as e:
+        return jsonify({"erro": "Erro interno no servidor", "detalhes": str(e)}), 500
 
-    return jsonify({"resposta": resposta})
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
