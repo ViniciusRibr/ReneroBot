@@ -1,3 +1,4 @@
+import os
 import json
 import google.generativeai as genai
 
@@ -5,10 +6,13 @@ class GerarConteudo:
     def __init__(self, memory_path="memorias.json"):
         self.conversa = []
         self.memory = {}
-        self.memory_path = memory_path
+
+        self.memory_dir = "memoria_bot" 
+        self.memory_path = os.path.join(self.memory_dir, memory_path)    
+        os.makedirs(self.memory_dir, exist_ok=True)
         self.load_memory()
 
-        genai.configure(api_key="AIzaSyBg9-jNfIC6Ah5X5en2-ESiRwNy77Ide9Y")
+        genai.configure(api_key="AIzaSyCGK_PmoCAdrYB02td27SPoeK7ZrnQ5pUM")
         self.model = genai.GenerativeModel("gemini-1.5-flash")
 
 
@@ -44,7 +48,6 @@ class GerarConteudo:
             prompt,
             generation_config=genai.types.GenerationConfig(
                 candidate_count=1,
-                stop_sequences=[".", "?", "!", "Até mais"],
                 max_output_tokens=2000,
                 temperature=1.0,
             )
@@ -52,7 +55,7 @@ class GerarConteudo:
         self.conversa.append(f"Assistente: {response.text}")
         return response.text
 
-    def process_memory(self, texto_resposta):
+    def process_memory(self, texto_resposta, ):
         """Processa e salva memórias indicadas pelo bot."""
         if "Memória:" in texto_resposta:
             linhas = texto_resposta.splitlines()
