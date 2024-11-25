@@ -1,8 +1,9 @@
+import json
 import customtkinter as ctk
 import ctypes
 from PIL import Image
 
-from Chatbot import GerarConteudo
+from chatbot import GerarConteudo
 from Perguntas import interacaoChatBot
 gerador_conteudo = GerarConteudo()
 chat_interaction = interacaoChatBot()
@@ -20,18 +21,13 @@ def iniciar_chat():
     app.geometry("500x700")
     hello = chat_interaction.iteracao_ram()
 
-    # Botão de lixeira
-    clear_icon = ctk.CTkButton(app, text="🗑", font=fonte_emoji, command=clear_chat,
-                               fg_color="transparent", hover_color="#444444", width=40, height=40)
-    clear_icon.pack(pady=(10, 0)) 
-
     # Caixa de chat
-    chat_box = ctk.CTkTextbox(app, width=400, height=500, font=fonte_2)
+    chat_box = ctk.CTkTextbox(app, width=400, height=500, font=fonte_1)
     chat_box.tag_config("Usuário", background="#444444", foreground="white", lmargin1=5, rmargin=20, justify="right")
     chat_box.tag_config("ChatBot", background="#222222", foreground="white", lmargin1=5, rmargin=5)
     chat_box.pack(padx=20, pady=(20, 0))
 
-    # Saudações
+# Saudações
     display_dynamic_text(chat_box, f"🤖 ChatBot: {hello}\n", "ChatBot")
 
     # Campo de entrada do usuário
@@ -47,12 +43,18 @@ def iniciar_chat():
     # Envia a mensagem após apertar "Enter"
     user_input.bind("<Return>", lambda event: send_message(chat_box, user_input))
 
+    # Botão de lixeira
+    clear_icon = ctk.CTkButton(app, text="🗑", font=fonte_emoji, command=clear_chat,
+                               fg_color="transparent", hover_color="#444444", width=40, height=40)
+    clear_icon.pack(pady=(10, 0)) 
+
+
 def send_message(chat_box, user_input):
     mensagem = user_input.get()
 
     # Exibe a mensagem do usuário na caixa de texto
     if mensagem:
-        chat_box.insert("end", f"Você: {mensagem}\n", "Usuário")
+        chat_box.insert("end", f"{mensagem}\n", "Usuário")
         chat_box.see("end")
         user_input.delete(0, "end")
 
@@ -80,6 +82,44 @@ def display_dynamic_text(chat_box, text, tag, delay=3):
 def clear_chat():
     chat_box.delete("1.0", "end")  # Limpa todo o conteúdo da chat_box
 
+def salvar_nome(nome):
+    try:
+        with open("usuario.json", "w") as arquivo:
+            json.dump({"nome": nome}, arquivo)
+        print(f"Nome '{nome}' salvo com sucesso.")
+    except Exception as e:
+        print(f"Erro ao salvar nome {e}")
+
+
+# Função para verificar se o nome já foi salvo
+def carregar_nome():
+    try:
+        with open("usuario.json", "r") as arquivo:
+            dados = json.load(arquivo)
+            return dados.get("nome", None)
+    except FileNotFoundError:
+        return None
+    except json.JSONDecodeError:
+        print("Erro ao ler o arquivo JSON.")
+        return None
+
+def confirmar_nome():
+    nome = entry_nome.get().strip()
+    if nome:  # Verifica se o nome foi inserido
+        global user_name
+        user_name = nome
+        salvar_nome(user_name)
+        label_nome.pack_forget()  # Remove a entrada de nome
+        entry_nome.pack_forget()
+        button_confirmar_nome.pack_forget()
+        iniciar_chat()  # Inicia o chat com o nome definido
+    else:
+        # Exibe uma mensagem de erro se o nome estiver vazio
+        error_label = ctk.CTkLabel(app, text="Por favor, insira um nome válido.", font=(fonte_2, 12), text_color="red")
+        error_label.pack(pady=(10, 0))
+        app.after(3000, error_label.destroy)  # Remove a mensagem após 3 segundos
+
+
 app = ctk.CTk()
 app.geometry("800x600")
 app.title("ReneroBot")
@@ -99,8 +139,19 @@ bg_image = ctk.CTkImage(light_image=original_image, size=(800, 600))
 bg_label = ctk.CTkLabel(app, image=bg_image)
 bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-# Botão para iniciar o chat
-button = ctk.CTkButton(app, text="Iniciar Chat", command=iniciar_chat, font=fonte_2)
-button.pack(expand=True)
+
+frame_central = ctk.CTkFrame(app) 
+frame_central.pack(expand=True)
+user_name = carregar_nome()
+
+if user_name:
+    iniciar_chat()
+else:
+    label_nome = ctk.CTkLabel(frame_central, text="Digite seu nome:", font=(fonte_2, 16))
+    label_nome.pack(pady=(20, 5))
+    entry_nome = ctk.CTkEntry(frame_central, placeholder_text="Seu nome", font=(fonte_2, 14))
+    entry_nome.pack(pady=10, padx=20)
+    button_confirmar_nome = ctk.CTkButton(frame_central, text="Iniciar", font=(fonte_2, 14), command=confirmar_nome)
+    button_confirmar_nome.pack(pady=20)
 
 app.mainloop()

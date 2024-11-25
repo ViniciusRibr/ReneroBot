@@ -1,4 +1,4 @@
-from Chatbot import GerarConteudo
+from chatbot import GerarConteudo
 from Perguntas import interacaoChatBot
 
 gerador_conteudo = GerarConteudo()
