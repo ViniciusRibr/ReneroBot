@@ -17,8 +17,12 @@ class GerarConteudo:
 
 
     def save_memory(self):
-        with open(self.memory_path, "w") as file:
-            json.dump(self.memory, file, indent=4)
+        try:
+            with open(self.memory_path, "w") as file:
+                json.dump(self.memory, file, indent=4)
+            print("Memoria salva com sucesso.")
+        except Exception as e:
+            print("Erro ao salvar Memória.")
 
     def load_memory(self):
         try:
@@ -36,10 +40,12 @@ class GerarConteudo:
         memory_context = "\n".join(
             [f"{chave}: {valor}" for chave, valor in self.memory.items()]
         )
-        prompt = f"""Você é um assistente virtual amigável e profissional chamado ReneroBot. Responda de forma direta e sem saudações ou introduções nas respostas, exceto na primeira interação do usuário. Concentre-se em responder o conteúdo da mensagem, considerando o contexto de conversas anteriores.
+        prompt = f"""Você é um assistente virtual amigável e profissional chamado ReneroBot. Responda de forma direta e sem saudações nas respostas,
+        Concentre-se em responder o conteúdo da mensagem, considerando o contexto de conversas anteriores.
         Considere o seguinte contexto: {context}
-        Se o usuário pedir para lembrar de algo, registe explicitamente no formato "Memoria: chave=valor", Memorias importantes do usuário : {memory_context}
-        Idioma padrão: Português Brasileiro. Traduza o texto se necessário. Evite repetir saudações e introduções; não utilize muitos emojis ou gírias.
+        Se o usuário pedir para lembrar de algo, registe explicitamente no formato "Memoria: chave=valor",
+        Memorias importantes do usuário : {memory_context}
+        Idioma padrão: Português Brasileiro. Traduza o texto se necessário. Evite repetir saudações; não utilize muitos emojis ou gírias.
 
         Se a resposta for complexa, pergunte ao final se o usuário necessita de algo mais."""
 
@@ -52,9 +58,13 @@ class GerarConteudo:
                 temperature=1.0,
             )
         )
-        self.conversa.append(f"Assistente: {response.text}")
-        return response.text
+        texto_resposta = response.text
+        self.conversa.append(f"Assistente: {texto_resposta}")
 
+        #Irá processar a memória duradoura e retornar a resposta
+        self.process_memory(texto_resposta)
+        return texto_resposta
+    
     def process_memory(self, texto_resposta, ):
         """Processa e salva memórias indicadas pelo bot."""
         if "Memória:" in texto_resposta:

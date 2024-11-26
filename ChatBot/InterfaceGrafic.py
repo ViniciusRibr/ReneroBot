@@ -12,6 +12,17 @@ chat_interaction = interacaoChatBot()
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
+# Alternar temas
+tema_atual = "dark"
+def theme():
+    global tema_atual
+    if tema_atual == "dark":
+        ctk.set_appearance_mode("light")
+        tema_atual = "light"
+    else:
+        ctk.set_appearance_mode("dark")
+        tema_atual = "dark"
+
 def iniciar_chat():
     global chat_box
     global user_input
@@ -22,7 +33,7 @@ def iniciar_chat():
     hello = chat_interaction.iteracao_ram()
 
     # Caixa de chat
-    chat_box = ctk.CTkTextbox(app, width=400, height=500, font=fonte_1)
+    chat_box = ctk.CTkTextbox(app, width=400, height=500, font=fonte_2)
     chat_box.tag_config("Usuário", background="#444444", foreground="white", lmargin1=5, rmargin=20, justify="right")
     chat_box.tag_config("ChatBot", background="#222222", foreground="white", lmargin1=5, rmargin=5)
     chat_box.pack(padx=20, pady=(20, 0))
@@ -140,10 +151,11 @@ bg_label = ctk.CTkLabel(app, image=bg_image)
 bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
 
+# Tela inicial
 frame_central = ctk.CTkFrame(app) 
 frame_central.pack(expand=True)
 user_name = carregar_nome()
-
+# Definir nome de usuário
 if user_name:
     iniciar_chat()
 else:
