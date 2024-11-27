@@ -40,7 +40,7 @@ class GerarConteudo:
         memory_context = "\n".join(
             [f"{chave}: {valor}" for chave, valor in self.memory.items()]
         )
-        prompt = f"""Você é um assistente virtual amigável e profissional chamado ReneroBot. Responda de forma direta e sem saudações nas respostas,
+        prompt = f"""Você é um assistente virtual amigável e profissional chamado ReneroBot.
         Concentre-se em responder o conteúdo da mensagem, considerando o contexto de conversas anteriores.
         Considere o seguinte contexto: {context}
         Se o usuário pedir para lembrar de algo, registe explicitamente no formato "Memoria: chave=valor",
@@ -55,7 +55,7 @@ class GerarConteudo:
             generation_config=genai.types.GenerationConfig(
                 candidate_count=1,
                 max_output_tokens=2000,
-                temperature=1.0,
+                temperature=2.0,
             )
         )
         texto_resposta = response.text

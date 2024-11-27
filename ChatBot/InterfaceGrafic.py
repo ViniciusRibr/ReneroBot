@@ -23,17 +23,25 @@ def theme():
         ctk.set_appearance_mode("dark")
         tema_atual = "dark"
 
+def maximizar():
+    app.geometry(f"{app.winfo_screenwidth()}x{app.winfo_screenheight()}+0+0")
+
 def iniciar_chat():
     global chat_box
     global user_input
     global send_button
+    global hello
     for widget in app.winfo_children():
         widget.destroy()
     app.geometry("500x700")
+    app.resizable(False, False)
     hello = chat_interaction.iteracao_ram()
 
+    # Main Frame
+    main_frame = ctk.CTkFrame(app)
+    main_frame.pack(fill="both", expand=True)
     # Caixa de chat
-    chat_box = ctk.CTkTextbox(app, width=400, height=500, font=fonte_2)
+    chat_box = ctk.CTkTextbox(main_frame, width=400, height=520, font=fonte_2, state="readonly")
     chat_box.tag_config("Usuário", background="#444444", foreground="white", lmargin1=5, rmargin=20, justify="right")
     chat_box.tag_config("ChatBot", background="#222222", foreground="white", lmargin1=5, rmargin=5)
     chat_box.pack(padx=20, pady=(20, 0))
@@ -44,7 +52,6 @@ def iniciar_chat():
     # Campo de entrada do usuário
     user_input = ctk.CTkEntry(app, placeholder_text="Digite sua mensagem aqui..", width=350, font=fonte_2)
     user_input.pack(side="left", padx=(20, 10), pady=10)
-
     # Botão de envio
     send_image = Image.open("imagens/Sendimage.png").resize((35, 35), Image.Resampling.LANCZOS)
     send_image_tk = ctk.CTkImage(light_image=send_image, size=(35, 35))
@@ -54,10 +61,23 @@ def iniciar_chat():
     # Envia a mensagem após apertar "Enter"
     user_input.bind("<Return>", lambda event: send_message(chat_box, user_input))
 
+    # Frame para icones a esquerda
+    frame_icones = ctk.CTkFrame(main_frame, width=50)
+    frame_icones.place(relx=0, rely=0)  # Sobreposição total
+    frame_icones.pack_propagate(True)
+    # Botão de maximizar tela
+    maximizar_btn = ctk.CTkButton(frame_icones, text="🗖", font=fonte_emoji, command=maximizar,
+                                fg_color="transparent", hover_color="#444444", width=40, height=40)
+    maximizar_btn.pack(pady=(10, 5))
+    # Botão de trocar tema                   
+    btn_tema = ctk.CTkButton(frame_icones, text="🌗", font=fonte_emoji, command=theme,
+                         fg_color="transparent", hover_color="#444444", width=40, height=40)
+    btn_tema.pack(pady=(5, 5))
+
     # Botão de lixeira
-    clear_icon = ctk.CTkButton(app, text="🗑", font=fonte_emoji, command=clear_chat,
+    clear_icon = ctk.CTkButton(frame_icones, text="🗑", font=fonte_emoji, command=clear_chat,
                                fg_color="transparent", hover_color="#444444", width=40, height=40)
-    clear_icon.pack(pady=(10, 0)) 
+    clear_icon.pack(pady=(5, 10)) 
 
 
 def send_message(chat_box, user_input):
@@ -92,6 +112,7 @@ def display_dynamic_text(chat_box, text, tag, delay=3):
 # Limpar mensagens
 def clear_chat():
     chat_box.delete("1.0", "end")  # Limpa todo o conteúdo da chat_box
+    display_dynamic_text(chat_box, f"🤖 ChatBot: {hello}\n", "ChatBot")
 
 def salvar_nome(nome):
     try:
@@ -132,7 +153,7 @@ def confirmar_nome():
 
 
 app = ctk.CTk()
-app.geometry("800x600")
+app.geometry("700x700")
 app.title("ReneroBot")
 myappid = "meuNome.meuChatbot.interface.v1"  # Exemplo de ID único
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
