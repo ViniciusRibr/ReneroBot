@@ -41,7 +41,7 @@ def iniciar_chat():
     main_frame = ctk.CTkFrame(app)
     main_frame.pack(fill="both", expand=True)
     # Caixa de chat
-    chat_box = ctk.CTkTextbox(main_frame, width=400, height=520, font=fonte_2, state="readonly")
+    chat_box = ctk.CTkTextbox(main_frame, width=400, height=520, font=fonte_2)
     chat_box.tag_config("Usuário", background="#444444", foreground="white", lmargin1=5, rmargin=20, justify="right")
     chat_box.tag_config("ChatBot", background="#222222", foreground="white", lmargin1=5, rmargin=5)
     chat_box.pack(padx=20, pady=(20, 0))
