@@ -1,7 +1,8 @@
 import json
 import customtkinter as ctk
 import ctypes
-from PIL import Image
+import cv2
+from PIL import Image, ImageTk
 
 from chatbot import GerarConteudo
 from Perguntas import interacaoChatBot
@@ -13,7 +14,6 @@ ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
 # Alternar temas
-tema_atual = "dark"
 def theme():
     global tema_atual
     if tema_atual == "dark":
@@ -23,8 +23,15 @@ def theme():
         ctk.set_appearance_mode("dark")
         tema_atual = "dark"
 
+janela_atual = {"Fullscreen": False}
 def maximizar():
-    app.geometry(f"{app.winfo_screenwidth()}x{app.winfo_screenheight()}+0+0")
+    global janela_atual
+    if janela_atual["Fullscreen"]:
+        app.geometry("500x650")
+        janela_atual["Fullscreen"] = False
+    else:
+        app.geometry(f"{app.winfo_screenwidth()}x{app.winfo_screenheight()}+0+0")
+        janela_atual["Fullscreen"] = True
 
 def iniciar_chat():
     global chat_box
@@ -33,7 +40,7 @@ def iniciar_chat():
     global hello
     for widget in app.winfo_children():
         widget.destroy()
-    app.geometry("500x700")
+    app.geometry("500x650")
     app.resizable(False, False)
     hello = chat_interaction.iteracao_ram()
 
@@ -131,9 +138,6 @@ def carregar_nome():
             return dados.get("nome", None)
     except FileNotFoundError:
         return None
-    except json.JSONDecodeError:
-        print("Erro ao ler o arquivo JSON.")
-        return None
 
 def confirmar_nome():
     nome = entry_nome.get().strip()
@@ -153,24 +157,44 @@ def confirmar_nome():
 
 
 app = ctk.CTk()
-app.geometry("700x700")
+app.geometry("660x600")
 app.title("ReneroBot")
 myappid = "meuNome.meuChatbot.interface.v1"  # Exemplo de ID único
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 app.iconbitmap("imagens/favicon.ico")
+app.resizable(False, False)
 
 # Fontes
 fonte_1 = ctk.CTkFont(family="COCOMAT", size=14)
-fonte_2 = ctk.CTkFont(family="Inter 18pt Medium", size=12)
+fonte_2 = ctk.CTkFont(family="Inter 18pt Medium", size=13)
 fonte_emoji = ctk.CTkFont(family="Inter", size=24)  # Fonte maior para o emoji de lixeira
 
-# Imagem de fundo
-original_image = Image.open("imagens/Background.png").resize((800, 600), Image.Resampling.LANCZOS)
-bg_image = ctk.CTkImage(light_image=original_image, size=(800, 600))
-# Label com a imagem de fundo
-bg_label = ctk.CTkLabel(app, image=bg_image)
+# Background
+cap = cv2.VideoCapture("imagens/background.mp4")
+bg_label = ctk.CTkLabel(app, text="")  # Label para o fundo
 bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
+# Função para atualizar os quadros do vídeo
+def atualizar_frame():
+    ret, frame = cap.read()
+    if ret:
+        # Converte o frame para RGB e ajusta o tamanho
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = Image.fromarray(frame)
+        frame = frame.resize((app.winfo_width(), app.winfo_height()))
+        frame_tk = ImageTk.PhotoImage(frame)
+
+        # Atualiza o label com o frame
+        bg_label.configure(image=frame_tk)
+        bg_label.image = frame_tk
+        # Agendamento do próximo frame
+        app.after(60, atualizar_frame)
+    else:
+        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Reinicia o vídeo
+        atualizar_frame()
+
+# Loop
+atualizar_frame()
 
 # Tela inicial
 frame_central = ctk.CTkFrame(app) 
@@ -188,3 +212,4 @@ else:
     button_confirmar_nome.pack(pady=20)
 
 app.mainloop()
+cap.release()
