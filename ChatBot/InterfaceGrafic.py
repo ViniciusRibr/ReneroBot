@@ -1,7 +1,8 @@
 import json
 import customtkinter as ctk
 import ctypes
-from PIL import Image
+import cv2
+from PIL import Image, ImageTk
 
 from chatbot import GerarConteudo
 from Perguntas import interacaoChatBot
@@ -13,7 +14,6 @@ ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
 # Alternar temas
-tema_atual = "dark"
 def theme():
     global tema_atual
     if tema_atual == "dark":
@@ -23,8 +23,15 @@ def theme():
         ctk.set_appearance_mode("dark")
         tema_atual = "dark"
 
+janela_atual = {"Fullscreen": False}
 def maximizar():
-    app.geometry(f"{app.winfo_screenwidth()}x{app.winfo_screenheight()}+0+0")
+    global janela_atual
+    if janela_atual["Fullscreen"]:
+        app.geometry("500x650")
+        janela_atual["Fullscreen"] = False
+    else:
+        app.geometry(f"{app.winfo_screenwidth()}x{app.winfo_screenheight()}+0+0")
+        janela_atual["Fullscreen"] = True
 
 def iniciar_chat():
     global chat_box
@@ -33,7 +40,7 @@ def iniciar_chat():
     global hello
     for widget in app.winfo_children():
         widget.destroy()
-    app.geometry("500x700")
+    app.geometry("500x650")
     app.resizable(False, False)
     hello = chat_interaction.iteracao_ram()
 
@@ -65,10 +72,7 @@ def iniciar_chat():
     frame_icones = ctk.CTkFrame(main_frame, width=50)
     frame_icones.place(relx=0, rely=0)  # Sobreposição total
     frame_icones.pack_propagate(True)
-    # Botão de maximizar tela
-    maximizar_btn = ctk.CTkButton(frame_icones, text="🗖", font=fonte_emoji, command=maximizar,
-                                fg_color="transparent", hover_color="#444444", width=40, height=40)
-    maximizar_btn.pack(pady=(10, 5))
+
     # Botão de trocar tema                   
     btn_tema = ctk.CTkButton(frame_icones, text="🌗", font=fonte_emoji, command=theme,
                          fg_color="transparent", hover_color="#444444", width=40, height=40)
@@ -131,9 +135,6 @@ def carregar_nome():
             return dados.get("nome", None)
     except FileNotFoundError:
         return None
-    except json.JSONDecodeError:
-        print("Erro ao ler o arquivo JSON.")
-        return None
 
 def confirmar_nome():
     nome = entry_nome.get().strip()
@@ -153,24 +154,45 @@ def confirmar_nome():
 
 
 app = ctk.CTk()
-app.geometry("700x700")
+app.geometry("640x480")
 app.title("ReneroBot")
 myappid = "meuNome.meuChatbot.interface.v1"  # Exemplo de ID único
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 app.iconbitmap("imagens/favicon.ico")
+app.resizable(False, False)
 
 # Fontes
 fonte_1 = ctk.CTkFont(family="COCOMAT", size=14)
-fonte_2 = ctk.CTkFont(family="Inter 18pt Medium", size=12)
+fonte_2 = ctk.CTkFont(family="Inter 18pt Medium", size=13)
 fonte_emoji = ctk.CTkFont(family="Inter", size=24)  # Fonte maior para o emoji de lixeira
 
-# Imagem de fundo
-original_image = Image.open("imagens/Background.png").resize((800, 600), Image.Resampling.LANCZOS)
-bg_image = ctk.CTkImage(light_image=original_image, size=(800, 600))
-# Label com a imagem de fundo
-bg_label = ctk.CTkLabel(app, image=bg_image)
-bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+# Background
+cap = cv2.VideoCapture("imagens/background.mp4")
+# Frame para exibir o vídeo
+video_frame = ctk.CTkLabel(app)
+video_frame.place(x=0, y=0)  # Tamanho fixo do vídeo
 
+def exibir_frame():
+    ret, frame = cap.read()
+    if ret:
+        # Converte BGR para RGB
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # Converte para imagem PIL
+        frame_image = Image.fromarray(frame)
+        # Cria uma CTkImage a partir da imagem PIL
+        frame_image_tk = ctk.CTkImage(light_image=frame_image, size=(640, 480))
+        # Atualiza o frame no widget
+        video_frame.configure(image=frame_image_tk)
+        video_frame.image = frame_image_tk
+    else:
+        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Reinicia o vídeo
+
+    app.after(33, exibir_frame)  # 30 FPS (aproximado)
+
+exibir_frame()
+
+
+# Função para atualizar os qu
 
 # Tela inicial
 frame_central = ctk.CTkFrame(app) 
@@ -188,3 +210,4 @@ else:
     button_confirmar_nome.pack(pady=20)
 
 app.mainloop()
+cap.release()
