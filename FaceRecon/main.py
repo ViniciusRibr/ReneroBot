@@ -1,64 +1,113 @@
 import cv2
-import time
 import os
+import numpy as np
 
-# Inicializando o classificador e a câmera
-classific = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-camera = cv2.VideoCapture(0)
-if not camera.isOpened():
-    print("Erro ao acessar a câmera.")
-    exit()
-
-# Criando diretório para armazenar as fotos, se não existir
-if not os.path.exists('fotos/fotos2'):
-    os.makedirs('fotos/fotos2')
-
-# Configurações de captura
-amostra = 1
-numAmostra = 25
-id = input("Digite seu identificador: ")
+diretorio_principal = "FaceRecon"
 largura, altura = 220, 220
-print("Capturando a face...")
+numero_fotos = 30
+camera = cv2.VideoCapture(0)
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+reconhecedor = cv2.face.EigenFaceRecognizer_create()
 
-# Variáveis de controle de tempo
-lastmes = time.time()
-intervalo = 2
+# Função para criar as pastas automaticamente
+def criar_pastas_automaticamente():
+    if not os.path.exists(diretorio_principal):
+        os.makedirs(diretorio_principal)
+    
+    for pessoa_id in range(1, 8):
+        pasta = os.path.join(diretorio_principal, f"fotos{pessoa_id}")
+        if not os.path.exists(pasta):
+            os.makedirs(pasta)
+            print(f"Pasta '{pasta}' criada.")
 
-# Loop principal de captura
-while amostra <= numAmostra:
-    conectado, imagem = camera.read()
-    if not conectado:
-        print("Erro ao capturar imagem.")
-        break
+# Função para capturar fotos
+def capturar_fotos(pasta, pessoa_id):
+    if not os.path.exists(pasta):
+        os.makedirs(pasta)
 
-    imagemCinza = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
-    facesdetec = classific.detectMultiScale(imagemCinza, scaleFactor=1.5, minSize=(150, 150))
+    print(f"Capturando fotos para a pessoa {pessoa_id}...")
+    contador = 0
+    while contador < numero_fotos:
+        conectado, imagem = camera.read()
+        if not conectado:
+            print("Erro ao capturar a imagem da câmera.")
+            break
 
-    # Desenha o retângulo ao redor do rosto e salva a imagem
-    for (x, y, l, a) in facesdetec:
-        cv2.rectangle(imagem, (x, y), (x + l, y + a), (0, 255, 0), 2)
+        imagem_cinza = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(imagem_cinza, scaleFactor=1.5, minSize=(150, 150))
 
-        # Condição para garantir que a captura ocorra no intervalo desejado
-        if time.time() - lastmes >= intervalo:
-            imagemRosto = imagemCinza[y:y + a, x:x + l]
-            imagemRosto = cv2.resize(imagemRosto, (largura, altura))
-            sucesso = cv2.imwrite(f"fotos/fotos2/auto_fotos_{amostra}.jpg", imagemRosto)
+        for (x, y, l, a) in faces:
+            imagem_face = cv2.resize(imagem_cinza[y:y + a, x:x + l], (largura, altura))
+            caminho_arquivo = os.path.join(pasta, f"pessoa_{pessoa_id}_foto_{contador + 1}.jpg")
+            cv2.imwrite(caminho_arquivo, imagem_face)
+            contador += 1
 
-            if sucesso:
-                print(f"[foto {amostra}] capturada com sucesso.")
-                amostra += 1
-                lastmes = time.time()  # Atualiza o tempo da última captura
-            else:
-                print(f"Falha ao salvar a foto {amostra}.")
+            cv2.rectangle(imagem, (x, y), (x + l, y + a), (0, 255, 0), 2)
+            cv2.imshow("Captura de Fotos", imagem)
 
-    # Exibição da imagem com o retângulo ao redor do rosto
-    cv2.imshow("Face_recon", imagem)
+            if contador >= numero_fotos:
+                break
 
-    # Encerra o loop ao pressionar "q"
-    if cv2.waitKey(10) & 0xFF == ord("q"):
-        break
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-# Finalizando a captura
-print("Faces capturadas com sucesso!")
+# Função para treinar o classificador
+def treinar_classificador():
+    print("Treinando classificador...")
+    faces, ids = [], []
+
+    for pessoa_id in range(1, 8):
+        pasta = os.path.join(diretorio_principal, f"fotos{pessoa_id}")
+        if not os.path.exists(pasta):
+            print(f"Pasta {pasta} não encontrada. Pulando...")
+            continue
+
+        for arquivo in os.listdir(pasta):
+            caminho_arquivo = os.path.join(pasta, arquivo)
+            imagem = cv2.imread(caminho_arquivo, cv2.IMREAD_GRAYSCALE)
+
+            if imagem is None:
+                print(f"Erro ao carregar imagem: {caminho_arquivo}. Pulando...")
+                continue
+
+            if imagem.shape != (altura, largura):
+                print(f"Imagem de tamanho incorreto: {caminho_arquivo}. Pulando...")
+                continue
+
+            faces.append(imagem)
+            ids.append(pessoa_id)
+
+    print(f"Total de imagens usadas para treinamento: {len(faces)}")
+
+    if len(faces) < 2:
+        print("Imagens insuficientes para treinamento. Abortando...")
+        return False
+
+    try:
+        reconhecedor.train(faces, np.array(ids))
+        classificador_path = os.path.join(diretorio_principal, "classificadorEigen.yml")
+        reconhecedor.write(classificador_path)
+        print(f"Classificador salvo em: {classificador_path}")
+        return True
+    except cv2.error as e:
+        print(f"Erro durante o treinamento: {e}")
+        return False
+
+# Criar as pastas automaticamente
+criar_pastas_automaticamente()
+
+# Capturar fotos para os IDs
+for pessoa_id in range(1, 8):  # IDs de 1 a 7
+    pasta = os.path.join(diretorio_principal, f"fotos{pessoa_id}")
+    capturar_fotos(pasta, pessoa_id)
+
+# Treinar o classificador
+if treinar_classificador():
+    print("Treinamento concluído com sucesso!")
+else:
+    print("O treinamento falhou.")
+
+
+# Limpar recursos
 camera.release()
 cv2.destroyAllWindows()
