@@ -72,10 +72,7 @@ def iniciar_chat():
     frame_icones = ctk.CTkFrame(main_frame, width=50)
     frame_icones.place(relx=0, rely=0)  # Sobreposição total
     frame_icones.pack_propagate(True)
-    # Botão de maximizar tela
-    maximizar_btn = ctk.CTkButton(frame_icones, text="🗖", font=fonte_emoji, command=maximizar,
-                                fg_color="transparent", hover_color="#444444", width=40, height=40)
-    maximizar_btn.pack(pady=(10, 5))
+
     # Botão de trocar tema                   
     btn_tema = ctk.CTkButton(frame_icones, text="🌗", font=fonte_emoji, command=theme,
                          fg_color="transparent", hover_color="#444444", width=40, height=40)
@@ -157,7 +154,7 @@ def confirmar_nome():
 
 
 app = ctk.CTk()
-app.geometry("660x600")
+app.geometry("640x480")
 app.title("ReneroBot")
 myappid = "meuNome.meuChatbot.interface.v1"  # Exemplo de ID único
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -171,30 +168,31 @@ fonte_emoji = ctk.CTkFont(family="Inter", size=24)  # Fonte maior para o emoji d
 
 # Background
 cap = cv2.VideoCapture("imagens/background.mp4")
-bg_label = ctk.CTkLabel(app, text="")  # Label para o fundo
-bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+# Frame para exibir o vídeo
+video_frame = ctk.CTkLabel(app)
+video_frame.place(x=0, y=0)  # Tamanho fixo do vídeo
 
-# Função para atualizar os quadros do vídeo
-def atualizar_frame():
+def exibir_frame():
     ret, frame = cap.read()
     if ret:
-        # Converte o frame para RGB e ajusta o tamanho
+        # Converte BGR para RGB
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        frame = Image.fromarray(frame)
-        frame = frame.resize((app.winfo_width(), app.winfo_height()))
-        frame_tk = ImageTk.PhotoImage(frame)
-
-        # Atualiza o label com o frame
-        bg_label.configure(image=frame_tk)
-        bg_label.image = frame_tk
-        # Agendamento do próximo frame
-        app.after(60, atualizar_frame)
+        # Converte para imagem PIL
+        frame_image = Image.fromarray(frame)
+        # Cria uma CTkImage a partir da imagem PIL
+        frame_image_tk = ctk.CTkImage(light_image=frame_image, size=(640, 480))
+        # Atualiza o frame no widget
+        video_frame.configure(image=frame_image_tk)
+        video_frame.image = frame_image_tk
     else:
         cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Reinicia o vídeo
-        atualizar_frame()
 
-# Loop
-atualizar_frame()
+    app.after(33, exibir_frame)  # 30 FPS (aproximado)
+
+exibir_frame()
+
+
+# Função para atualizar os qu
 
 # Tela inicial
 frame_central = ctk.CTkFrame(app) 
