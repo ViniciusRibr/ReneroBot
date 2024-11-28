@@ -58,7 +58,7 @@ def atualizar_frame():
                 cv2.rectangle(imagem, (x, y), (x + l, y + a), (0, 0, 255), 2)
                 id, confianca = reconhecedor.predict(imagemFace)
                 if id == 1:
-                    nome = "Gustavo"
+                    nome = "Aluno"
                     cv2.putText(imagem, str(nome), (x, y + (a + 30)), font, 2, (0, 0, 255))
                     liberar_botao()
 
@@ -90,19 +90,24 @@ video_label.pack()
 
 # Frame para os botões
 frame_botoes = Frame(frame_principal)
-frame_botoes.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.Y)
+frame_botoes.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+# Centralizar botões no frame_botoes
+frame_botoes.grid_rowconfigure(0, weight=1)  # Espaço acima dos botões
+frame_botoes.grid_rowconfigure(5, weight=1)  # Espaço abaixo dos botões
+frame_botoes.grid_columnconfigure(0, weight=1)  # Centralizar horizontalmente
 
 # Botões
 botao_iniciar = Button(frame_botoes, text="Face ID", command=iniciar_camera, width=15)
-botao_iniciar.pack(pady=5)
+botao_iniciar.grid(row=1, column=0, pady=5)
 
 botao_parar = Button(frame_botoes, text="Parar Câmera", command=parar_camera, width=15)
-botao_parar.pack(pady=5)
+botao_parar.grid(row=2, column=0, pady=5)
 
 botao_fechar = Button(frame_botoes, text="Fechar", command=janela.destroy, width=15)
-botao_fechar.pack(pady=5)
+botao_fechar.grid(row=3, column=0, pady=5)
 
 open_chat = tk.Button(frame_botoes, text="Abrir ChatBot", fg="blue", cursor="hand2", font=18, command=my_open, state="disabled")
-open_chat.pack(pady=5)
+open_chat.grid(row=4, column=0, pady=5)
 
 janela.mainloop()
