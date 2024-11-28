@@ -23,16 +23,6 @@ def theme():
         ctk.set_appearance_mode("dark")
         tema_atual = "dark"
 
-janela_atual = {"Fullscreen": False}
-def maximizar():
-    global janela_atual
-    if janela_atual["Fullscreen"]:
-        app.geometry("500x650")
-        janela_atual["Fullscreen"] = False
-    else:
-        app.geometry(f"{app.winfo_screenwidth()}x{app.winfo_screenheight()}+0+0")
-        janela_atual["Fullscreen"] = True
-
 def iniciar_chat():
     global chat_box
     global user_input
@@ -164,6 +154,7 @@ app.resizable(False, False)
 # Fontes
 fonte_1 = ctk.CTkFont(family="COCOMAT", size=14)
 fonte_2 = ctk.CTkFont(family="Inter 18pt Medium", size=13)
+fonte_3 = ctk.CTkFont(family="Michroma", size=15)
 fonte_emoji = ctk.CTkFont(family="Inter", size=24)  # Fonte maior para o emoji de lixeira
 
 # Background
@@ -192,8 +183,6 @@ def exibir_frame():
 exibir_frame()
 
 
-# Função para atualizar os qu
-
 # Tela inicial
 frame_central = ctk.CTkFrame(app) 
 frame_central.pack(expand=True)
@@ -202,11 +191,11 @@ user_name = carregar_nome()
 if user_name:
     iniciar_chat()
 else:
-    label_nome = ctk.CTkLabel(frame_central, text="Digite seu nome:", font=(fonte_2, 16))
+    label_nome = ctk.CTkLabel(frame_central, text="Digite seu nome:", font=(fonte_3, 15))
     label_nome.pack(pady=(20, 5))
     entry_nome = ctk.CTkEntry(frame_central, placeholder_text="Seu nome", font=(fonte_2, 14))
     entry_nome.pack(pady=10, padx=20)
-    button_confirmar_nome = ctk.CTkButton(frame_central, text="Iniciar", font=(fonte_2, 14), command=confirmar_nome)
+    button_confirmar_nome = ctk.CTkButton(frame_central, text="Iniciar", font=(fonte_1, 14), command=confirmar_nome, corner_radius=70, fg_color="#362580", border_color="#1E163F")
     button_confirmar_nome.pack(pady=20)
 
 app.mainloop()
