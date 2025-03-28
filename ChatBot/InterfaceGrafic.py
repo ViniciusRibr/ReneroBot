@@ -16,6 +16,7 @@ import RecFacial
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
+
 tema_atual = "dark"
 # Alternar temas
 def theme():
@@ -112,89 +113,36 @@ def clear_chat():
     chat_box.delete("1.0", "end")  # Limpa todo o conteúdo da chat_box
     display_dynamic_text(chat_box, f"🤖 ChatBot: {hello}\n", "ChatBot")
 
+USO_PATH = "usuario.json"
+
 def salvar_nome(nome):
     try:
-        with open("usuario.json", "w") as arquivo:
+        with open(USO_PATH, "w") as arquivo:
             json.dump({"nome": nome}, arquivo)
         print(f"Nome '{nome}' salvo com sucesso.")
     except Exception as e:
         print(f"Erro ao salvar nome {e}")
 
-
-# Função para verificar se o nome já foi salvo
 def carregar_nome():
     try:
-        with open("usuario.json", "r") as arquivo:
+        with open(USO_PATH, "r") as arquivo:
             dados = json.load(arquivo)
             return dados.get("nome", None)
     except FileNotFoundError:
         return None
-    
-def verificar_nome_e_iniciar():
-    # Verifica se o nome foi salvo corretamente
-    user_name = carregar_nome()
-    if user_name:
-        # Se o nome já foi carregado, tenta reconhecer a face e iniciar o chat
-        if reconhecer_usuario():  # Verifica se o reconhecimento facial foi bem-sucedido
-            iniciar_chat()
-    else:
-        # Se o nome não foi encontrado, solicita para o usuário inserir
-        display_nome_input()
 
-def display_nome_input():
-    # Função para exibir a tela de inserção do nome
-    global label_nome, entry_nome, button_confirmar_nome  # Tornando as variáveis globais
-    label_nome = ctk.CTkLabel(frame_central, text="Digite seu nome:", font=(fonte_3, 15))
-    label_nome.pack(pady=(20, 5))
-    entry_nome = ctk.CTkEntry(frame_central, placeholder_text="Seu nome", font=(fonte_2, 14))
-    entry_nome.pack(pady=10, padx=20)
-    button_confirmar_nome = ctk.CTkButton(frame_central, text="Iniciar", font=(fonte_1, 14), command=confirmar_nome, corner_radius=70, fg_color="#362580", border_color="#1E163F")
-    button_confirmar_nome.pack(pady=20)
+def exibir_mensagem_erro(mensagem):
+    error_label = ctk.CTkLabel(app, text=mensagem, font=(fonte_2, 12), text_color="red")
+    error_label.pack(pady=(10, 0))
+    app.after(3000, error_label.destroy)
 
 def confirmar_nome():
     nome = entry_nome.get().strip()
     if nome:
-        global user_name
-        user_name = nome
-        salvar_nome(user_name)
-
-        # Inicia o reconhecimento facial e salva a face
-        face_salva = RecFacial.capturar_face(nome)  # Função para salvar a face do usuário
-        if face_salva:
-            label_nome.pack_forget()  # Remove a entrada de nome
-            entry_nome.pack_forget()
-            button_confirmar_nome.pack_forget()
-
-            # Após salvar a face, inicie o chat
-            iniciar_chat()
-        else:
-            error_label = ctk.CTkLabel(app, text="Erro ao capturar a face. Tente novamente.", font=(fonte_2, 12), text_color="red")
-            error_label.pack(pady=(10, 0))
-            app.after(3000, error_label.destroy)  # Remove a mensagem após 3 segundos
+        salvar_nome(nome)
+        iniciar_chat()
     else:
-        # Exibe uma mensagem de erro se o nome estiver vazio
-        error_label = ctk.CTkLabel(app, text="Por favor, insira um nome válido.", font=(fonte_2, 12), text_color="red")
-        error_label.pack(pady=(10, 0))
-        app.after(3000, error_label.destroy)  # Remove a mensagem após 3 segundos
-
-# Função para realizar o reconhecimento facial na segunda vez
-def reconhecer_usuario():
-    nome = carregar_nome()
-    if nome:
-        face_reconhecida = RecFacial.reconhecer_face()  # Função de reconhecimento facial
-        if face_reconhecida:
-            return True  # Retorna True se o reconhecimento for bem-sucedido
-        else:
-            error_label = ctk.CTkLabel(app, text="Face não reconhecida. Tente novamente.", font=(fonte_2, 12), text_color="red")
-            error_label.pack(pady=(10, 0))
-            app.after(3000, error_label.destroy)  # Remove a mensagem após 3 segundos
-    else:
-        # Se o nome não foi salvo
-        error_label = ctk.CTkLabel(app, text="Nome não encontrado. Tente inserir novamente.", font=(fonte_2, 12), text_color="red")
-        error_label.pack(pady=(10, 0))
-        app.after(3000, error_label.destroy)  # Remove a mensagem após 3 segundos
-    return False  # Retorna False se o reconhecimento falhar
-
+        exibir_mensagem_erro("Por favor, insira um nome válido.")
 
 app = ctk.CTk()
 app.geometry("640x480")
@@ -230,19 +178,23 @@ def exibir_frame():
         video_frame.image = frame_image_tk
     else:
         cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Reinicia o vídeo
-
     app.after(33, exibir_frame)  # 30 FPS (aproximado)
-
 exibir_frame()
 
 
 # Tela inicial
-frame_central = ctk.CTkFrame(app) 
+frame_central = ctk.CTkFrame(app, corner_radius=30, fg_color="transparent" ) 
 frame_central.pack(expand=True)
 user_name = carregar_nome()
-
-# Verifica se o nome foi carregado ou se precisa ser inserido
-app.after(100, verificar_nome_e_iniciar)  # Atrasando a execução para garantir que a interface esteja pronta
+if user_name:
+    iniciar_chat()
+else:
+    label_nome = ctk.CTkLabel(frame_central, text="Digite seu nome:", font=(fonte_2, 16))
+    label_nome.pack(pady=(20, 5))
+    entry_nome = ctk.CTkEntry(frame_central, placeholder_text="Seu nome", font=(fonte_1, 14), corner_radius=15)
+    entry_nome.pack(pady=10, padx=20)
+    button_confirmar_nome = ctk.CTkButton(frame_central, text="Iniciar", font=(fonte_3, 14), command=confirmar_nome, corner_radius=20, fg_color="#2812b2", hover_color="#160969")
+    button_confirmar_nome.pack(pady=20)
 
 app.mainloop()
 cap.release()

@@ -58,7 +58,6 @@ def capturar_face(nome):
     reconhecedor.save(modelo_path)
     print(f"Modelo de reconhecimento facial salvo em: {modelo_path}")
 
-# Função para reconhecer a face do usuário
 def reconhecer_face():
     camera = cv2.VideoCapture(0)
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
@@ -68,7 +67,7 @@ def reconhecer_face():
     modelo_path = "modelo_face.yml"
     if not os.path.exists(modelo_path):
         print("Modelo de reconhecimento facial não encontrado.")
-        return None
+        return False  # Alterado para retornar False em vez de None
 
     reconhecedor.read(modelo_path)
     while True:
@@ -88,10 +87,12 @@ def reconhecer_face():
             cv2.rectangle(imagem, (x, y), (x + l, y + a), (0, 255, 0), 2)
             cv2.putText(imagem, f"ID: {id_face} ({confianca:.2f})", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
 
-            if confianca < 100:  # Se a confiança for baixa, podemos considerar a face reconhecida
+            # Considera face reconhecida se a confiança for adequada
+            if confianca < 100:  # Ajuste se necessário
                 camera.release()
                 cv2.destroyAllWindows()
-                return id_face  # Retorna o ID reconhecido
+                print(f"Face reconhecida com ID {id_face} e confiança {confianca:.2f}")
+                return True  # Reconhecimento bem-sucedido
 
         cv2.imshow("Reconhecimento Facial", imagem)
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -99,4 +100,4 @@ def reconhecer_face():
 
     camera.release()
     cv2.destroyAllWindows()
-    return None
+    return False  # Retorna False se nenhuma face for reconhecida
