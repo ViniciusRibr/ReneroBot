@@ -10,7 +10,7 @@ from Perguntas import interacaoChatBot
 gerador_conteudo = GerarConteudo()
 chat_interaction = interacaoChatBot()
 
-import RecFacial
+import FaceRecon.RecFacial as RecFacial
 
 # Tema
 ctk.set_appearance_mode("dark")
