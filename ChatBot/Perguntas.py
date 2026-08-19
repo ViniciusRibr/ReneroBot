@@ -1,7 +1,18 @@
+"""
+Perguntas.py - Welcome Greetings Management for ReneroBot.
+
+Provides initial random greeting selection for new chat sessions.
+"""
+
 import random
-class interacaoChatBot:
-    def __init__(self):
-        self.saudacoes = [
+from typing import List
+
+
+class InteracaoChatBot:
+    """Manages initial greetings and interaction triggers for the chatbot UI."""
+
+    def __init__(self) -> None:
+        self.saudacoes: List[str] = [
             "Olá! Como posso te ajudar hoje?",
             "Oi! Que bom ver você por aqui!",
             "Bem-vindo! O que você gostaria de conversar?",
@@ -19,14 +30,25 @@ class interacaoChatBot:
             "Olá! Vamos resolver suas dúvidas hoje?",
             "Oi! Como você está? Posso te ajudar em algo?",
             "Bem-vindo ao chat! Qual é a sua pergunta?",
-            "Olá! Pronto para te ajudar com o que precisar!" 
+            "Olá! Pronto para te ajudar com o que precisar!"
         ]
-        self.saudação_enviada = False
+        self.saudacao_enviada: bool = False
 
+    def obter_saudacao(self) -> str:
+        """
+        Returns a randomly selected initial greeting message.
 
-    def iteracao_ram(self):
-        if not self.saudação_enviada:
-            self.saudação_enviada = True
+        :return: Greeting string if not sent yet, otherwise empty string.
+        """
+        if not self.saudacao_enviada:
+            self.saudacao_enviada = True
             return random.choice(self.saudacoes)
         return ""
-    
+
+    # Aliases for backward compatibility
+    def iteracao_ram(self) -> str:
+        return self.obter_saudacao()
+
+
+# Backward compatibility alias
+interacaoChatBot = InteracaoChatBot

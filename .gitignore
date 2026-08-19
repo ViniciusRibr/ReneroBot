@@ -1,0 +1,20 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.egg-info/
+
+# User data and persistent memories generated at runtime
+memoria_bot/
+usuario.json
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
