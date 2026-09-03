@@ -101,3 +101,6 @@ This project was built following structured user experience design principles:
 ## 📜 License
 
 Distributed under the MIT License. Feel free to modify and adapt for personal or educational use!
+
+
+Btw, this was my ever fist project, so don't expect much.
